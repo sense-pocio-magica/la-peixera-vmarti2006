@@ -1,5 +1,3 @@
-using System;
-
 namespace Peixera
 {
     public enum Sexe { Mascle, Femella, Null }
@@ -21,6 +19,6 @@ namespace Peixera
             Moviment = dir;
         }
 
-        public abstract void Moure(int midaTauler);
+        public abstract void Moure(int mida);
     }
 }
