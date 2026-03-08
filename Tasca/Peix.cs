@@ -8,14 +8,10 @@ namespace Peixera
         {
             switch (Moviment)
             {
-                case Direccio.Nord: Y = (Y - 1 + mida) % mida;
-                break;
-                case Direccio.Sud: Y = (Y + 1) % mida;
-                break;
-                case Direccio.Est: X = (X + 1) % mida;
-                break;
-                case Direccio.Oest: X = (X - 1 + mida) % mida;
-                break;
+                case Direccio.Nord: Y = (Y - 1 + mida) % mida; break;
+                case Direccio.Sud: Y = (Y + 1) % mida; break;
+                case Direccio.Est: X = (X + 1) % mida; break;
+                case Direccio.Oest: X = (X - 1 + mida) % mida; break;
             }
         }
     }

@@ -9,7 +9,7 @@ namespace Peixera
         public void Envellir()
         {
             Vida--;
-            if (Vida <= 0) EstaMort = true; 
+            if (Vida <= 0) EstaMort = true;
         }
     }
 }

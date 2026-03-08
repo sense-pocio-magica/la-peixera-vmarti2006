@@ -9,60 +9,32 @@ namespace Peixera
         static void Main(string[] args)
         {
             int mida = 20;
-            int rondesTotals = 100;
             Random rnd = new Random();
             List<Criatura> habitants = new List<Criatura>();
-            Tauler motorTauler = new Tauler();
+            Tauler motor = new Tauler();
 
-            for (int i = 0; i < 10; i++)
+            for (int i = 0; i < 10; i++) 
             {
                 habitants.Add(new Peix(rnd.Next(mida), rnd.Next(mida), Sexe.Mascle, (Direccio)rnd.Next(4)));
                 habitants.Add(new Peix(rnd.Next(mida), rnd.Next(mida), Sexe.Femella, (Direccio)rnd.Next(4)));
             }
-
             habitants.Add(new Tauro(rnd.Next(mida), rnd.Next(mida), Sexe.Mascle, (Direccio)rnd.Next(4)));
             habitants.Add(new Tauro(rnd.Next(mida), rnd.Next(mida), Sexe.Femella, (Direccio)rnd.Next(4)));
+            habitants.Add(new Pop(0, 0));
+            habitants.Add(new Pop(mida - 1, mida - 1));
+            for (int i = 0; i < 3; i++) habitants.Add(new Tortuga(rnd.Next(mida), rnd.Next(mida), (Sexe)rnd.Next(2), (Direccio)rnd.Next(4)));
 
-            habitants.Add(new Pop(0, rnd.Next(mida)));
-            habitants.Add(new Pop(mida - 1, rnd.Next(mida)));
-
-            for (int i = 0; i < 3; i++)
+            for (int r = 1; r <= 100; r++)
             {
-                Sexe s = rnd.Next(2) == 0 ? Sexe.Mascle : Sexe.Femella;
-                habitants.Add(new Tortuga(rnd.Next(mida), rnd.Next(mida), s, (Direccio)rnd.Next(4)));
-            }
-
-            for (int r = 1; r <= rondesTotals; r++)
-            {
-                foreach (var h in habitants)
-                {
-                    h.Moure(mida);
-                }
-
-                foreach (var h in habitants.OfType<Tauro>())
-                {
-                    h.Envellir();
-                }
-
-                motorTauler.ResolInteraccions(habitants);
-
+                foreach (var h in habitants) h.Moure(mida);
+                foreach (var t in habitants.OfType<Tauro>()) t.Envellir();
+                motor.ResolInteraccions(habitants);
                 habitants.RemoveAll(h => h.EstaMort);
 
-                MostrarEstat(r, habitants);
+                Console.WriteLine($"Ronda {r:000} | Peixos: {habitants.Count(h => h is Peix && !(h is Tauro) && !(h is Tortuga))} | Taurons: {habitants.Count(h => h is Tauro)} | Pops: {habitants.Count(h => h is Pop)} | Tortugues: {habitants.Count(h => h is Tortuga)}");
             }
-
-            Console.WriteLine("\n=== SIMULACIÓ FINALITZADA ===");
-            Console.ReadLine();
-        }
-
-        static void MostrarEstat(int ronda, List<Criatura> habitants)
-        {
-            int peixos = habitants.Count(h => h is Peix && !(h is Tauro) && !(h is Tortuga));
-            int taurons = habitants.Count(h => h is Tauro);
-            int pops = habitants.Count(h => h is Pop);
-            int tortugues = habitants.Count(h => h is Tortuga);
-
-            Console.WriteLine($"Ronda {ronda:000} | Peixos: {peixos:00} | Taurons: {taurons:00} | Pops: {pops:00} | Tortugues: {tortugues:00} | Total: {habitants.Count}");
+            Console.WriteLine("\nPremeu qualsevol tecla per sortir...");
+            Console.ReadKey();
         }
     }
 }
