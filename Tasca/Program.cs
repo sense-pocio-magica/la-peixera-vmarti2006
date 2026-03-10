@@ -8,33 +8,45 @@ namespace Peixera
     {
         static void Main(string[] args)
         {
-            int mida = 20;
-            Random rnd = new Random();
-            List<Criatura> habitants = new List<Criatura>();
-            Tauler motor = new Tauler();
+            const int MIDA   = 20;
+            const int RONDES = 100;
 
-            for (int i = 0; i < 10; i++) 
-            {
-                habitants.Add(new Peix(rnd.Next(mida), rnd.Next(mida), Sexe.Mascle, (Direccio)rnd.Next(4)));
-                habitants.Add(new Peix(rnd.Next(mida), rnd.Next(mida), Sexe.Femella, (Direccio)rnd.Next(4)));
-            }
-            habitants.Add(new Tauro(rnd.Next(mida), rnd.Next(mida), Sexe.Mascle, (Direccio)rnd.Next(4)));
-            habitants.Add(new Tauro(rnd.Next(mida), rnd.Next(mida), Sexe.Femella, (Direccio)rnd.Next(4)));
-            habitants.Add(new Pop(0, 0));
-            habitants.Add(new Pop(mida - 1, mida - 1));
-            for (int i = 0; i < 3; i++) habitants.Add(new Tortuga(rnd.Next(mida), rnd.Next(mida), (Sexe)rnd.Next(2), (Direccio)rnd.Next(4)));
+            var rnd      = new Random();
+            var motor    = new Tauler();
+            var habitants = Pecera.Inicialitzar(MIDA, rnd);
 
-            for (int r = 1; r <= 100; r++)
+            for (int r = 1; r <= RONDES; r++)
             {
-                foreach (var h in habitants) h.Moure(mida);
-                foreach (var t in habitants.OfType<Tauro>()) t.Envellir();
+                // 1. Mover criaturas vivas
+                foreach (var h in habitants.Where(h => !h.EstaMort))
+                    h.Moure(MIDA);
+
+                // 2. Envejecer tiburones
+                foreach (var t in habitants.OfType<Tauro>().Where(t => !t.EstaMort))
+                    t.Envellir();
+
+                // 3. Resolver interacciones
                 motor.ResolInteraccions(habitants);
+
+                // 4. Eliminar muertos
                 habitants.RemoveAll(h => h.EstaMort);
 
-                Console.WriteLine($"Ronda {r:000} | Peixos: {habitants.Count(h => h is Peix && !(h is Tauro) && !(h is Tortuga))} | Taurons: {habitants.Count(h => h is Tauro)} | Pops: {habitants.Count(h => h is Pop)} | Tortugues: {habitants.Count(h => h is Tortuga)}");
+                // 5. Mostrar estado
+                MostrarEstat(r, habitants);
             }
-            Console.WriteLine("\nPremeu qualsevol tecla per sortir...");
+
+            Console.WriteLine("\nSimulació completada. Prem qualsevol tecla...");
             Console.ReadKey();
+        }
+
+        static void MostrarEstat(int ronda, List<Criatura> habitants)
+        {
+            int peixos   = habitants.Count(h => h is Peix && !(h is Tauro) && !(h is Tortuga));
+            int taurons  = habitants.Count(h => h is Tauro);
+            int pops     = habitants.Count(h => h is Pop);
+            int tortuges = habitants.Count(h => h is Tortuga);
+
+            Console.WriteLine($"Ronda {ronda,3} | Peixos: {peixos,4} | Taurons: {taurons,2} | Pops: {pops,1} | Tortuges: {tortuges,2}");
         }
     }
 }
